@@ -72,3 +72,9 @@ def test_status_file_and_page_settings(tmp_path):
     assert status["topics_key"] == "tech:high|health:normal"
     assert '"repo": "owner/repo"' in page and '"builtDay": "2027-01-15"' in page
     assert 'id="picker"' in page and 'id="open-picker"' in page
+
+
+def test_picker_script_is_published(tmp_path):  # FR-6
+    build_page(tmp_path)
+    script = (tmp_path / "app.js").read_text(encoding="utf-8")
+    assert "/contents/settings.json" in script and "briefing-access-key" in script
