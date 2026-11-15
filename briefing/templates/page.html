@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Daily Briefing</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="masthead">
+  <div>
+    <h1>Daily Briefing</h1>
+    <p class="built">{{ built_date }} · last built {{ built_time }} Thailand time</p>
+  </div>
+  <button type="button" id="open-picker" class="button">Topics</button>
+</header>
+<p id="notice" class="notice" hidden></p>
+<nav class="topic-menu" aria-label="Topics">
+  {% for s in sections %}<a href="#{{ s.slug }}" data-topic="{{ s.key }}" style="--hue: {{ s.hue }}">{{ s.icon }} {{ s.name }}</a>
+  {% endfor %}
+</nav>
+<main>
+{% for s in sections %}
+<section id="{{ s.slug }}" class="topic{% if s.high %} high{% endif %}" data-topic="{{ s.key }}" style="--hue: {{ s.hue }}">
+  <h2><span class="icon">{{ s.icon }}</span>{{ s.name }}</h2>
+  {% if s.stories %}
+  <div class="cards">
+    {% for story in s.stories %}
+    <article class="card">
+      {% if story.image %}<img src="{{ story.image }}" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.remove()">{% endif %}
+      <h3><a href="{{ story.link }}" target="_blank" rel="noopener noreferrer">{{ story.title }}</a></h3>
+      {% if story.summary %}<p>{{ story.summary }}</p>{% endif %}
+      <span class="source">{{ story.source }}</span>
+    </article>
+    {% endfor %}
+  </div>
+  {% else %}
+  <p class="empty">No stories today</p>
+  {% endif %}
+</section>
+{% endfor %}
+</main>
+<dialog id="picker">
+  <h2>Your topics</h2>
+  <p id="picker-message" class="picker-message" hidden></p>
+  <h3>Chosen</h3>
+  <ul id="chosen" class="chips"></ul>
+  <h3>Add a topic</h3>
+  <div class="add-row">
+    <input id="new-topic" type="text" maxlength="40" placeholder="Type any topic" aria-label="New topic">
+    <button type="button" id="add-topic" class="button">Add</button>
+  </div>
+  <h3>Suggestions</h3>
+  <ul id="suggested" class="chips"></ul>
+  <div id="key-row" hidden>
+    <label>Access key (kept on this device only)
+      <input id="key" type="password" autocomplete="off">
+    </label>
+  </div>
+  <div class="picker-actions">
+    <button type="button" id="forget-key" class="link" hidden>Forget the access key on this device</button>
+    <button type="button" id="cancel" class="button">Cancel</button>
+    <button type="button" id="save" class="button primary">Save</button>
+  </div>
+</dialog>
+<script id="config" type="application/json">{{ config|tojson }}</script>
+<script src="app.js" defer></script>
+</body>
+</html>
