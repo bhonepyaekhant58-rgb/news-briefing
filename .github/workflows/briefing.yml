@@ -1,0 +1,61 @@
+name: Build the daily briefing
+
+on:
+  schedule:
+    - cron: "35 23 * * *"   # 23:35 UTC is 06:35 in Thailand
+  workflow_dispatch:         # lets the owner start a build by hand
+  push:
+    branches: [main]
+    paths: ["settings.json", "briefing/**", "requirements.txt", ".github/workflows/briefing.yml"]
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+# Only the newest build runs, so the page is never built from an older topic list.
+concurrency:
+  group: briefing
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - name: Download the project code
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          git clone --depth 1 --branch main "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" .
+          git config user.name "briefing-bot"
+          git config user.email "briefing-bot@users.noreply.github.com"
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Install packages
+        run: pip install -r requirements.txt
+
+      - name: Build the page
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: python -m briefing.build
+
+      - uses: actions/upload-pages-artifact@v4
+        with:
+          path: site
+
+      - id: deploy
+        uses: actions/deploy-pages@v5
+
+      - name: Save today's summaries
+        run: |
+          git add data/state.json
+          git commit -m "Daily briefing state" || exit 0
+          git pull --rebase
+          git push
