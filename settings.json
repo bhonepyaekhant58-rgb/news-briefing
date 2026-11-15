@@ -1,0 +1,77 @@
+{
+  "story_target": 70,
+  "model": "gemini-flash-lite-latest",
+  "max_ai_requests": 8,
+  "topics": [
+    {
+      "name": "Tech", "priority": "high", "icon": "💻",
+      "feeds": [
+        "https://techcrunch.com/feed/",
+        "https://www.theverge.com/rss/index.xml",
+        "https://feeds.arstechnica.com/arstechnica/index",
+        "https://news.ycombinator.com/rss",
+        "https://news.google.com/rss/headlines/section/topic/TECHNOLOGY?hl=en-US&gl=US&ceid=US:en"
+      ]
+    },
+    {
+      "name": "AI", "priority": "high", "icon": "🤖",
+      "feeds": [
+        "https://techcrunch.com/category/artificial-intelligence/feed/",
+        "https://venturebeat.com/category/ai/feed/"
+      ],
+      "search": ["AI engineering", "AI automation", "AI business"]
+    },
+    {
+      "name": "Business", "priority": "high", "icon": "📈",
+      "feeds": [
+        "https://feeds.bbci.co.uk/news/business/rss.xml",
+        "https://news.google.com/rss/headlines/section/topic/BUSINESS?hl=en-US&gl=US&ceid=US:en"
+      ],
+      "search": ["digital marketing", "selling digital products"],
+      "region_search": ["Myanmar business", "Southeast Asia business"]
+    },
+    {
+      "name": "Politics", "priority": "normal", "icon": "🏛️",
+      "feeds": ["https://feeds.npr.org/1014/rss.xml"],
+      "search": ["world politics"],
+      "region_search": ["Myanmar politics", "ASEAN politics"]
+    },
+    {
+      "name": "Big events", "priority": "normal", "icon": "🌍",
+      "feeds": [
+        "https://feeds.bbci.co.uk/news/world/rss.xml",
+        "https://news.google.com/rss/headlines/section/topic/WORLD?hl=en-US&gl=US&ceid=US:en"
+      ],
+      "region_search": ["Myanmar", "Southeast Asia"]
+    },
+    {
+      "name": "Health", "priority": "normal", "icon": "🩺",
+      "feeds": [
+        "https://feeds.bbci.co.uk/news/health/rss.xml",
+        "https://news.google.com/rss/headlines/section/topic/HEALTH?hl=en-US&gl=US&ceid=US:en"
+      ]
+    },
+    {
+      "name": "Music & Entertainment", "priority": "normal", "icon": "🎵",
+      "feeds": [
+        "https://feeds.bbci.co.uk/news/entertainment_and_arts/rss.xml",
+        "https://news.google.com/rss/headlines/section/topic/ENTERTAINMENT?hl=en-US&gl=US&ceid=US:en"
+      ],
+      "search": ["music news"]
+    },
+    {"name": "Celebrity", "priority": "normal", "icon": "⭐", "search": ["celebrity news"]},
+    {"name": "Religion", "priority": "normal", "icon": "🕊️", "search": ["religion news"]},
+    {"name": "History", "priority": "normal", "icon": "📜", "kind": "history"},
+    {
+      "name": "Trending", "priority": "normal", "icon": "🔥",
+      "feeds": ["https://news.google.com/rss?hl=en-US&gl=US&ceid=US:en"]
+    }
+  ],
+  "suggested": [
+    "Science", "Space", "Climate", "Sports", "Football", "Gaming", "Movies & TV",
+    "Books", "Travel", "Food", "Education", "Startups", "Cybersecurity", "Programming",
+    "Gadgets", "Robotics", "Digital marketing", "E-commerce", "AI automation",
+    "AI engineering", "Productivity", "Myanmar", "Southeast Asia", "Thailand",
+    "Design", "Photography", "Cars", "Psychology"
+  ]
+}
