@@ -30,18 +30,26 @@ def check_settings(settings):
         raise SettingsError(f"settings has {len(topics)} topics; the most allowed is {MAX_TOPICS}")
     seen = set()
     for topic in topics:
-        name = str(topic.get("name", "")).strip() if isinstance(topic, dict) else ""
-        if not name:
+        name = topic.get("name") if isinstance(topic, dict) else None
+        if not isinstance(name, str) or not name.strip():
             raise SettingsError("every topic needs a name")
+        name = name.strip()
         if name.lower() in seen:
             raise SettingsError(f"topic '{name}' is listed twice")
         seen.add(name.lower())
         priority = topic.get("priority", "normal")
         if priority not in ("high", "normal"):
             raise SettingsError(f"topic '{name}' has priority '{priority}'; use 'high' or 'normal'")
+        for field in ("feeds", "search", "region_search"):
+            value = topic.get(field, [])
+            if not isinstance(value, list) or not all(isinstance(item, str) for item in value):
+                raise SettingsError(f"topic '{name}': '{field}' must be a list of text inside [ ] brackets")
     target = settings.get("story_target", 70)
     if not isinstance(target, int) or not 1 <= target <= 80:
         raise SettingsError("story_target must be a whole number from 1 to 80")
+    limit = settings.get("max_ai_requests", 8)
+    if not isinstance(limit, int) or isinstance(limit, bool) or not 1 <= limit <= 8:
+        raise SettingsError("max_ai_requests must be a whole number from 1 to 8")
 
 
 def ordered_topics(settings):

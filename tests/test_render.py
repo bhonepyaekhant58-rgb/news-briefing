@@ -78,3 +78,18 @@ def test_picker_script_is_published(tmp_path):  # FR-6
     build_page(tmp_path)
     script = (tmp_path / "app.js").read_text(encoding="utf-8")
     assert "/contents/settings.json" in script and "briefing-access-key" in script
+
+
+def test_topics_with_similar_names_get_different_ids(tmp_path):  # AC-2.5
+    sections = [section_for({"name": "C++"}, []), section_for({"name": "C#"}, [])]
+    settings = {"topics": [{"name": "C++"}, {"name": "C#"}]}
+    render_page(sections, settings, NOW, "owner/repo", tmp_path)
+    page = (tmp_path / "index.html").read_text(encoding="utf-8")
+    assert 'id="topic-c"' in page and 'id="topic-c-2"' in page
+    assert 'href="#topic-c"' in page and 'href="#topic-c-2"' in page
+
+
+def test_picker_saves_under_the_project_name(tmp_path):
+    build_page(tmp_path)
+    script = (tmp_path / "app.js").read_text(encoding="utf-8")
+    assert 'committer: { name: "Briefing Owner", email: "owner@news-briefing.invalid" }' in script

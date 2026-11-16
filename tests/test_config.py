@@ -51,6 +51,10 @@ def test_topics_key_ignores_case_and_spaces():
     (topics(("", "normal")), "name"),
     (topics(("a", "urgent")), "priority"),
     ({"topics": [{"name": "a"}], "story_target": 500}, "story_target"),
+    ({"topics": [{"name": 5}]}, "name"),
+    ({"topics": [{"name": "a", "feeds": "https://example.com/feed"}]}, "feeds"),
+    ({"topics": [{"name": "a"}], "max_ai_requests": "8"}, "max_ai_requests"),
+    ({"topics": [{"name": "a"}], "max_ai_requests": 20}, "max_ai_requests"),
 ])
 def test_mistakes_are_named(bad, word):  # error scenario: settings mistake
     with pytest.raises(SettingsError, match=word):

@@ -67,8 +67,8 @@ def parse_feed(content, now, region=False):
         if source and title.endswith(" - " + source):
             title = title[: -len(source) - 3]
         description = clean_text(entry.get("summary", ""))
-        if description.lower().startswith(title.lower()[:40]):
-            description = ""  # the feed only repeated the headline
+        if description.lower().startswith(title.lower()[:40]) or len(description.split()) < 3:
+            description = ""  # the feed gave no real text of its own
         if title:
             stories.append({"title": title, "link": link, "source": source,
                             "description": description, "image": image_of(entry),

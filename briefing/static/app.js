@@ -13,6 +13,7 @@
   let fileSha = "";     // the file's version id, needed to save over it
   let draft = [];       // the topic list being edited in the picker
   let timer = null;
+  let staleNote = "";  // set when the page is from an earlier day
 
   function read(name) {
     try { return localStorage.getItem(name); } catch (error) { return null; }
@@ -86,6 +87,7 @@
         content: encode(JSON.stringify(settings, null, 2) + "\n"),
         sha: fileSha,
         branch: "main",
+        committer: { name: "Briefing Owner", email: "owner@news-briefing.invalid" },
       }),
     });
   }
@@ -93,11 +95,11 @@
   // Check every 20 seconds until the published page was built from this topic list.
   function watchForUpdate(key, since) {
     clearInterval(timer);
-    notice("Updating your briefing. This usually takes about 5 minutes.");
+    notice(staleNote + "Updating your briefing. This usually takes about 5 minutes.");
     async function check() {
       if (Date.now() - since > WAIT_LIMIT) {
         clearInterval(timer);
-        notice("The update did not finish. Your topics are saved and the next build will use them.");
+        notice(staleNote + "The update did not finish. Your topics are saved and the next build will use them.");
         return;
       }
       try {
@@ -250,7 +252,7 @@
     if (savedKey === config.builtKey) {  // back to the list the page already shows
       clearInterval(timer);
       store(PENDING_NAME, null);
-      notice("");
+      notice(staleNote ? staleNote + "Today's has not been built yet." : "");
       return;
     }
     const since = Date.now();
@@ -275,7 +277,8 @@
   async function start() {
     const today = new Date(Date.now() + 7 * 60 * 60 * 1000).toISOString().slice(0, 10);
     if (config.builtDay !== today) {
-      notice("This briefing is from " + config.builtDay + ". Today's has not been built yet.");
+      staleNote = "This briefing is from " + config.builtDay + ". ";
+      notice(staleNote + "Today's has not been built yet.");
     }
     if (!config.repo) return;
     try { await loadSettings(); } catch (error) { return; }

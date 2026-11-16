@@ -6,6 +6,7 @@ import requests
 
 API = "https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent"
 BATCH = 10
+MAX_REQUESTS = 8
 
 PROMPT = """You write summaries for a personal news page.
 For each story below, write a summary of at most 2 short sentences in plain English.
@@ -42,7 +43,8 @@ def summarize_stories(stories, cache, model, api_key, max_requests=8, ask=call_g
     todo = [story for story in stories if not story["summary"] and not story.get("history")]
     used = 0
     if api_key and todo:
-        size = max(BATCH, -(-len(todo) // max(1, max_requests)))  # -(-a // b) rounds up
+        limit = max(1, min(MAX_REQUESTS, max_requests))
+        size = max(BATCH, -(-len(todo) // limit))  # -(-a // b) rounds up
         for start in range(0, len(todo), size):
             batch = todo[start:start + size]
             listing = json.dumps(
@@ -54,8 +56,11 @@ def summarize_stories(stories, cache, model, api_key, max_requests=8, ask=call_g
                     story = batch[int(answer["id"])]
                     story["summary"] = two_sentences(str(answer["summary"]))
                     cache[story["link"]] = story["summary"]
-            except Exception as error:  # any failure falls back to the feed's own text
-                print(f"  AI request failed, using feed descriptions: {error}")
+            except requests.RequestException as error:  # the service is down or its limit is reached
+                print(f"  AI request failed, using feed descriptions for the rest: {error}")
+                break
+            except Exception as error:  # a reply that could not be read
+                print(f"  AI reply could not be used, using feed descriptions: {error}")
     for story in stories:
         if not story["summary"]:
             story["summary"] = two_sentences(story["description"])

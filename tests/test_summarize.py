@@ -1,5 +1,7 @@
 import json
 
+import requests
+
 from briefing.summarize import call_gemini, summarize_stories, two_sentences
 
 MODEL = "gemini-flash-lite-latest"
@@ -88,3 +90,22 @@ def test_call_gemini_keeps_the_key_out_of_the_address(monkeypatch):
     assert sent["url"].endswith("/models/gemini-flash-lite-latest:generateContent")
     assert "secret" not in sent["url"] and sent["headers"]["x-goog-api-key"] == "secret"
     assert sent["body"]["contents"][0]["parts"][0]["text"] == "hello"
+
+
+def test_request_cap_cannot_be_raised_above_8():
+    stories, calls = [story(number) for number in range(200)], []
+    assert summarize_stories(stories, {}, MODEL, "key", max_requests=20, ask=fake_ask(calls)) == 8
+    assert len(calls) == 8
+
+
+def test_a_refused_request_ends_the_requests():  # AC-6.1
+    calls = []
+
+    def refused(prompt, model, api_key):
+        calls.append(prompt)
+        raise requests.HTTPError("429 limit reached")
+
+    stories = [story(number) for number in range(25)]
+    assert summarize_stories(stories, {}, MODEL, "key", ask=refused) == 1
+    assert len(calls) == 1
+    assert all(item["summary"] == "Feed text one. Feed text two." for item in stories)

@@ -33,6 +33,12 @@ def render_page(sections, settings, now, repo, out_dir="site"):
     """Write index.html, status.json and the static files into out_dir."""
     built = datetime.fromtimestamp(now, THAILAND)
     key = topics_key(settings)
+    seen = {}
+    for section in sections:  # two topics must never share a section id
+        base = section["slug"]
+        seen[base] = seen.get(base, 0) + 1
+        if seen[base] > 1:
+            section["slug"] = f"{base}-{seen[base]}"
     environment = Environment(loader=FileSystemLoader(HERE / "templates"),
                               autoescape=select_autoescape(["html"]))
     page = environment.get_template("page.html").render(

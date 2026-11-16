@@ -102,3 +102,9 @@ def test_history_gives_events_with_their_year():  # AC-3.3
 def test_clean_text_shortens_long_text():
     text = clean_text("word " * 200, limit=50)
     assert len(text) <= 51 and text.endswith("…")
+
+
+def test_a_one_word_description_is_dropped():
+    link_only = "&lt;a href=&quot;https://news.example/item?id=1&quot;&gt;Comments&lt;/a&gt;"
+    [story] = parse_feed(rss(item("Show: a new tool", description=link_only)), NOW)
+    assert story["description"] == ""
