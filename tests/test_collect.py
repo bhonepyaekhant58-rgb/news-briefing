@@ -14,7 +14,8 @@ def item(title, link="https://example.com/a", age=600, description="", extra="")
 
 
 def rss(*items):
-    return ('<?xml version="1.0"?><rss version="2.0" xmlns:media="http://search.yahoo.com/mrss/">'
+    return ('<?xml version="1.0"?><rss version="2.0" xmlns:media="http://search.yahoo.com/mrss/" '
+            'xmlns:content="http://purl.org/rss/1.0/modules/content/">'
             f"<channel><title>Example News</title>{''.join(items)}</channel></rss>").encode()
 
 
@@ -114,3 +115,13 @@ def test_description_keeps_enough_text_for_context():  # FR-4
     long_text = " ".join(f"word{i}" for i in range(120))  # about 800 characters
     [story] = parse_feed(rss(item("Long story", description=long_text)), NOW)
     assert 400 < len(story["description"]) <= 601
+
+
+def test_feed_content_field_is_kept():  # AC-3.5
+    words = " ".join(f"word{i}" for i in range(300))
+    extra = f"<content:encoded><![CDATA[<p>{words}</p>]]></content:encoded>"
+    [story] = parse_feed(rss(item("Long read", extra=extra)), NOW)
+    assert "<" not in story["content"]
+    assert 600 < len(story["content"]) <= 1501
+    [plain] = parse_feed(rss(item("Plain story")), NOW)
+    assert plain["content"] == ""

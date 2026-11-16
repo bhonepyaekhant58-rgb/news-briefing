@@ -5,7 +5,7 @@ import sys
 import time
 from pathlib import Path
 
-from briefing import collect, summarize
+from briefing import article, collect, summarize
 from briefing.choose import choose_stories
 from briefing.config import SettingsError, load_settings, ordered_topics, story_counts, topics_key
 from briefing.render import render_page, section_for
@@ -29,7 +29,7 @@ def load_cache(state_path, now):
 
 
 def build(settings, now, api_key="", repo="", out_dir="site", state_path="data/state.json",
-          fetch=collect.fetch, ask=summarize.call_gemini):
+          fetch=collect.fetch, ask=summarize.call_gemini, fetch_page=article.fetch_page):
     """Build the page into out_dir. Raises BuildError if every news source failed."""
     counts = story_counts(settings)
     sections, used, tried, failed = [], [], 0, 0
@@ -56,6 +56,8 @@ def build(settings, now, api_key="", repo="", out_dir="site", state_path="data/s
 
     cache = load_cache(state_path, now)
     everything = [story for _, stories in sections for story in stories]
+    articles_read = article.add_details(everything, cache, fetch_page)
+    print(f"Articles read: {articles_read}")
     requests_used = summarize.summarize_stories(
         everything, cache, settings.get("model", "gemini-flash-lite-latest"), api_key,
         settings.get("max_ai_requests", 8), ask)

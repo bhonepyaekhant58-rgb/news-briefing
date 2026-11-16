@@ -69,9 +69,11 @@ def parse_feed(content, now, region=False):
         description = clean_text(entry.get("summary", ""), 600)
         if description.lower().startswith(title.lower()[:40]) or len(description.split()) < 3:
             description = ""  # the feed gave no real text of its own
+        content = clean_text((entry.get("content") or [{}])[0].get("value", ""), 1500)
         if title:
             stories.append({"title": title, "link": link, "source": source,
-                            "description": description, "image": image_of(entry),
+                            "description": description, "content": content,
+                            "image": image_of(entry),
                             "published": seconds, "region": region})
     return stories
 
@@ -113,7 +115,7 @@ def history_stories(now, count, fetch=fetch):
         stories.append({"title": f"On this day in {year}",
                         "link": link or f"https://en.wikipedia.org/wiki/{year}",
                         "source": "Wikipedia",
-                        "description": clean_text(event.get("text", "")),
+                        "description": clean_text(event.get("text", "")), "content": "",
                         "image": page.get("thumbnail", {}).get("source", ""),
                         "published": now, "region": False, "history": True})
     return stories

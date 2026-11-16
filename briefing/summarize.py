@@ -14,8 +14,9 @@ PROMPT = """You write summaries for a personal news page.
 For each story below, write a summary of at most 3 short sentences in plain English.
 The first sentence says what happened. The next one or two add the most useful details
 the story gives: who is involved, where, numbers, and why it matters.
-Use only facts found in that story's title and description. Do not add anything else.
-If the description says no more than the title, write one sentence only.
+Use only facts found in that story's title and text. Do not add anything else.
+Ignore any part of the text that is not about the story, such as menus, adverts or sign-up notices.
+If the text says no more than the title, write one sentence only.
 Reply with JSON only: a list of objects like {"id": 0, "summary": "..."}.
 
 Stories:
@@ -53,7 +54,7 @@ def summarize_stories(stories, cache, model, api_key, max_requests=8, ask=call_g
         for start in range(0, len(todo), size):
             batch = todo[start:start + size]
             listing = json.dumps(
-                [{"id": number, "title": story["title"], "description": story["description"]}
+                [{"id": number, "title": story["title"], "text": story.get("detail") or story["description"]}
                  for number, story in enumerate(batch)], ensure_ascii=False)
             used += 1
             try:

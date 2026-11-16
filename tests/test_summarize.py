@@ -155,3 +155,23 @@ def test_a_request_with_no_reply_does_not_stop_the_rest():  # AC-6.1
     ask = failing_first_call(calls, requests.ConnectionError("offline"))
     assert summarize_stories(stories, {}, MODEL, "key", ask=ask) == 3
     assert len(calls) == 3
+
+
+def test_the_ai_is_given_the_detail_text():  # AC-3.4
+    item, calls = story(0), []
+    item["detail"] = "Article text with many facts."
+    summarize_stories([item], {}, MODEL, "key", ask=fake_ask(calls))
+    assert "Article text with many facts." in calls[0]
+    assert item["description"] not in calls[0]
+
+
+def test_without_detail_the_description_is_sent():
+    item, calls = story(0), []
+    summarize_stories([item], {}, MODEL, "key", ask=fake_ask(calls))
+    assert item["description"] in calls[0]
+
+
+def test_prompt_tells_the_ai_to_ignore_page_clutter():
+    calls = []
+    summarize_stories([story(0)], {}, MODEL, "key", ask=fake_ask(calls))
+    assert "Ignore" in calls[0]

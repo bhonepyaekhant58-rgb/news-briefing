@@ -36,9 +36,13 @@ def fake_ask(calls):
     return ask
 
 
-def run(tmp_path, settings, fetch=fake_fetch, calls=None):
+def no_pages(url):
+    raise OSError("offline")
+
+
+def run(tmp_path, settings, fetch=fake_fetch, calls=None, fetch_page=no_pages):
     build(settings, NOW, "key", "owner/repo", tmp_path / "site", tmp_path / "state.json",
-          fetch, fake_ask([] if calls is None else calls))
+          fetch, fake_ask([] if calls is None else calls), fetch_page=fetch_page)
     return (tmp_path / "site" / "index.html").read_text(encoding="utf-8")
 
 
@@ -95,3 +99,21 @@ def test_a_mistake_in_settings_stops_the_build(tmp_path, monkeypatch, capsys):
         build_module.main()
     assert stop.value.code == 1
     assert "BUILD STOPPED" in capsys.readouterr().out and not (tmp_path / "site").exists()
+
+
+def test_summaries_are_written_from_article_pages(tmp_path):  # AC-3.4
+    def pages(url):
+        if url.endswith("/robots.txt"):
+            return "User-agent: *\nAllow: /"
+        return "<html><body><p>" + "ARTICLE-BODY " + "detail " * 40 + "</p></body></html>"
+
+    calls = []
+    page = run(tmp_path, load_settings(STARTING), calls=calls, fetch_page=pages)
+    assert any("ARTICLE-BODY" in prompt for prompt in calls)
+    assert page.count('class="card"') == 70
+
+
+def test_unreadable_articles_do_not_stop_the_build(tmp_path, capsys):  # AC-3.5
+    page = run(tmp_path, load_settings(STARTING), fetch_page=no_pages)
+    assert page.count('class="card"') == 70
+    assert "Articles read: 0" in capsys.readouterr().out
