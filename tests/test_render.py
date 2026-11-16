@@ -93,3 +93,11 @@ def test_picker_saves_under_the_project_name(tmp_path):
     build_page(tmp_path)
     script = (tmp_path / "app.js").read_text(encoding="utf-8")
     assert 'committer: { name: "Briefing Owner", email: "owner@news-briefing.invalid" }' in script
+
+
+def test_topic_menu_stays_on_screen(tmp_path):  # AC-2.9
+    page = build_page(tmp_path)
+    styles = (tmp_path / "style.css").read_text(encoding="utf-8")
+    assert page.index('class="layout"') < page.index('class="topic-menu"') < page.index("<main>")
+    assert "position: sticky" in styles and "scroll-margin-top" in styles
+    assert "min-width: 1000px" in styles and "overflow-x: auto" in styles

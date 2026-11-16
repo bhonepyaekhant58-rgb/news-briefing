@@ -66,7 +66,7 @@ def parse_feed(content, now, region=False):
         title = clean_text(entry.get("title", ""), 200)
         if source and title.endswith(" - " + source):
             title = title[: -len(source) - 3]
-        description = clean_text(entry.get("summary", ""))
+        description = clean_text(entry.get("summary", ""), 600)
         if description.lower().startswith(title.lower()[:40]) or len(description.split()) < 3:
             description = ""  # the feed gave no real text of its own
         if title:

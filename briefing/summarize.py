@@ -8,19 +8,24 @@ API = "https://generativelanguage.googleapis.com/v1beta/models/{model}:generateC
 BATCH = 10
 MAX_REQUESTS = 8
 
+MAX_SENTENCES = 3
+
 PROMPT = """You write summaries for a personal news page.
-For each story below, write a summary of at most 2 short sentences in plain English.
+For each story below, write a summary of at most 3 short sentences in plain English.
+The first sentence says what happened. The next one or two add the most useful details
+the story gives: who is involved, where, numbers, and why it matters.
 Use only facts found in that story's title and description. Do not add anything else.
+If the description says no more than the title, write one sentence only.
 Reply with JSON only: a list of objects like {"id": 0, "summary": "..."}.
 
 Stories:
 """
 
 
-def two_sentences(text):
-    """Keep at most the first two sentences."""
+def first_sentences(text, count=MAX_SENTENCES):
+    """Keep at most the first few sentences (3 unless told otherwise)."""
     parts = re.split(r"(?<![A-Z]\.)(?<=[.!?])\s+", " ".join((text or "").split()))
-    return " ".join(parts[:2])
+    return " ".join(parts[:count])
 
 
 def call_gemini(prompt, model, api_key):
@@ -54,7 +59,7 @@ def summarize_stories(stories, cache, model, api_key, max_requests=8, ask=call_g
             try:
                 for answer in json.loads(ask(PROMPT + listing, model, api_key)):
                     story = batch[int(answer["id"])]
-                    story["summary"] = two_sentences(str(answer["summary"]))
+                    story["summary"] = first_sentences(str(answer["summary"]))
                     cache[story["link"]] = story["summary"]
             except requests.RequestException as error:  # the service is down or its limit is reached
                 print(f"  AI request failed, using feed descriptions for the rest: {error}")
@@ -63,5 +68,5 @@ def summarize_stories(stories, cache, model, api_key, max_requests=8, ask=call_g
                 print(f"  AI reply could not be used, using feed descriptions: {error}")
     for story in stories:
         if not story["summary"]:
-            story["summary"] = two_sentences(story["description"])
+            story["summary"] = first_sentences(story["description"])
     return used

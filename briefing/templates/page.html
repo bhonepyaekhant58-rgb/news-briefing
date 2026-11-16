@@ -15,6 +15,7 @@
   <button type="button" id="open-picker" class="button">Topics</button>
 </header>
 <p id="notice" class="notice" hidden></p>
+<div class="layout">
 <nav class="topic-menu" aria-label="Topics">
   {% for s in sections %}<a href="#{{ s.slug }}" data-topic="{{ s.key }}" style="--hue: {{ s.hue }}">{{ s.icon }} {{ s.name }}</a>
   {% endfor %}
@@ -40,6 +41,7 @@
 </section>
 {% endfor %}
 </main>
+</div>
 <dialog id="picker">
   <h2>Your topics</h2>
   <p id="picker-message" class="picker-message" hidden></p>

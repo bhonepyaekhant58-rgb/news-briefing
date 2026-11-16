@@ -108,3 +108,9 @@ def test_a_one_word_description_is_dropped():
     link_only = "&lt;a href=&quot;https://news.example/item?id=1&quot;&gt;Comments&lt;/a&gt;"
     [story] = parse_feed(rss(item("Show: a new tool", description=link_only)), NOW)
     assert story["description"] == ""
+
+
+def test_description_keeps_enough_text_for_context():  # FR-4
+    long_text = " ".join(f"word{i}" for i in range(120))  # about 800 characters
+    [story] = parse_feed(rss(item("Long story", description=long_text)), NOW)
+    assert 400 < len(story["description"]) <= 601
