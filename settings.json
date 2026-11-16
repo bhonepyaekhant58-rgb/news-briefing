@@ -126,15 +126,11 @@
       ]
     },
     {
-      "name": "Sports",
+      "name": "sc",
       "priority": "normal"
     },
     {
-      "name": "Climate",
-      "priority": "normal"
-    },
-    {
-      "name": "Football",
+      "name": "Gaming",
       "priority": "normal"
     }
   ],
