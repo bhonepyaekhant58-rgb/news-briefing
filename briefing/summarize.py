@@ -62,8 +62,11 @@ def summarize_stories(stories, cache, model, api_key, max_requests=8, ask=call_g
                     story["summary"] = first_sentences(str(answer["summary"]))
                     cache[story["link"]] = story["summary"]
             except requests.RequestException as error:  # the service is down or its limit is reached
-                print(f"  AI request failed, using feed descriptions for the rest: {error}")
-                break
+                print(f"  AI request failed, using feed descriptions for this batch: {error}")
+                status = getattr(getattr(error, "response", None), "status_code", None)
+                if status == 429:  # limit reached: stop asking for this build
+                    break
+                # any other failure: only this batch loses its AI summaries, go on to the next
             except Exception as error:  # a reply that could not be read
                 print(f"  AI reply could not be used, using feed descriptions: {error}")
     for story in stories:

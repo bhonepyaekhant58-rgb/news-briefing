@@ -7,6 +7,13 @@ from briefing.summarize import call_gemini, summarize_stories, first_sentences
 MODEL = "gemini-flash-lite-latest"
 
 
+def http_error(status):
+    """A requests error that carries an HTTP status, like the real service sends."""
+    response = requests.Response()
+    response.status_code = status
+    return requests.HTTPError(f"{status} error", response=response)
+
+
 def story(number):
     return {"title": f"Title {number}", "link": f"https://example.com/{number}",
             "description": "Feed text one. Feed text two. Feed text three. Feed text four."}
@@ -110,9 +117,41 @@ def test_a_refused_request_ends_the_requests():  # AC-6.1
 
     def refused(prompt, model, api_key):
         calls.append(prompt)
-        raise requests.HTTPError("429 limit reached")
+        raise http_error(429)
 
     stories = [story(number) for number in range(25)]
     assert summarize_stories(stories, {}, MODEL, "key", ask=refused) == 1
     assert len(calls) == 1
     assert all(item["summary"] == "Feed text one. Feed text two. Feed text three." for item in stories)
+
+
+def failing_first_call(calls, error):
+    """An ask that raises `error` on the first call only, then answers like fake_ask."""
+    normal = fake_ask(calls)
+
+    def ask(prompt, model, api_key):
+        if not calls:
+            calls.append(prompt)
+            raise error
+        return normal(prompt, model, api_key)
+    return ask
+
+
+def test_one_failed_request_does_not_stop_the_rest():  # AC-6.1
+    calls = []
+    stories = [story(number) for number in range(25)]
+    ask = failing_first_call(calls, http_error(503))
+    assert summarize_stories(stories, {}, MODEL, "key", ask=ask) == 3
+    assert len(calls) == 3
+    assert all(item["summary"] == "Feed text one. Feed text two. Feed text three."
+               for item in stories[:10])
+    assert all(item["summary"] == f"AI summary of {item['title']}. Second. Third."
+               for item in stories[10:])
+
+
+def test_a_request_with_no_reply_does_not_stop_the_rest():  # AC-6.1
+    calls = []
+    stories = [story(number) for number in range(25)]
+    ask = failing_first_call(calls, requests.ConnectionError("offline"))
+    assert summarize_stories(stories, {}, MODEL, "key", ask=ask) == 3
+    assert len(calls) == 3
