@@ -8,6 +8,7 @@ from briefing import build as build_module
 from briefing.build import BuildError, build
 from briefing.config import load_settings
 
+STARTING = "tests/starting_settings.json"  # a fixed copy; the real settings.json is edited by the owner
 NOW = 1_800_000_000  # 15 January 2027, 15:00 in Thailand
 
 
@@ -43,7 +44,7 @@ def run(tmp_path, settings, fetch=fake_fetch, calls=None):
 
 def test_starting_topics_fill_the_page(tmp_path):  # AC-2.3
     calls = []
-    page = run(tmp_path, load_settings("settings.json"), calls=calls)
+    page = run(tmp_path, load_settings(STARTING), calls=calls)
     assert page.count('class="card"') == 70
     assert 1 <= len(calls) <= 8
     state = json.loads((tmp_path / "state.json").read_text(encoding="utf-8"))
@@ -51,7 +52,7 @@ def test_starting_topics_fill_the_page(tmp_path):  # AC-2.3
 
 
 def test_second_build_on_the_same_day_reuses_summaries(tmp_path):
-    settings = load_settings("settings.json")
+    settings = load_settings(STARTING)
     run(tmp_path, settings)
     calls = []
     run(tmp_path, settings, calls=calls)
@@ -63,7 +64,7 @@ def test_every_source_failing_leaves_the_old_page(tmp_path):  # AC-6.4
         raise OSError("offline")
 
     with pytest.raises(BuildError, match="every news source failed"):
-        run(tmp_path, load_settings("settings.json"), fetch=dead)
+        run(tmp_path, load_settings(STARTING), fetch=dead)
     assert not (tmp_path / "site" / "index.html").exists()
 
 
@@ -73,7 +74,7 @@ def test_one_dead_site_does_not_stop_the_build(tmp_path):  # AC-6.2
             raise OSError("offline")
         return fake_fetch(url)
 
-    page = run(tmp_path, load_settings("settings.json"), fetch=flaky)
+    page = run(tmp_path, load_settings(STARTING), fetch=flaky)
     assert page.count('class="card"') == 70
 
 

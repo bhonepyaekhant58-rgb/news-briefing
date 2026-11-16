@@ -68,7 +68,12 @@ def test_broken_file_is_reported(tmp_path):
         load_settings(path)
 
 
-def test_real_settings_file_is_valid():  # AC-2.2, AC-5.1
-    settings = load_settings("settings.json")
+def test_starting_settings_file_is_valid():  # AC-2.2, AC-5.1
+    settings = load_settings("tests/starting_settings.json")
     assert [topic["name"] for topic in ordered_topics(settings)] == ["Tech", "AI", "Business"] + OTHERS
     assert len(settings["suggested"]) >= 20
+
+
+def test_live_settings_file_is_valid():  # the owner edits this file from the page
+    settings = load_settings("settings.json")
+    assert 1 <= len(settings["topics"]) <= 20
