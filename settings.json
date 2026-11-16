@@ -124,6 +124,18 @@
       "feeds": [
         "https://news.google.com/rss?hl=en-US&gl=US&ceid=US:en"
       ]
+    },
+    {
+      "name": "Sports",
+      "priority": "normal"
+    },
+    {
+      "name": "Climate",
+      "priority": "normal"
+    },
+    {
+      "name": "Football",
+      "priority": "normal"
     }
   ],
   "suggested": [
