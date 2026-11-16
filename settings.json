@@ -116,22 +116,6 @@
       "priority": "normal",
       "icon": "📜",
       "kind": "history"
-    },
-    {
-      "name": "Trending",
-      "priority": "normal",
-      "icon": "🔥",
-      "feeds": [
-        "https://news.google.com/rss?hl=en-US&gl=US&ceid=US:en"
-      ]
-    },
-    {
-      "name": "sc",
-      "priority": "normal"
-    },
-    {
-      "name": "Gaming",
-      "priority": "normal"
     }
   ],
   "suggested": [
@@ -174,6 +158,14 @@
     "Archaeology",
     "Medicine",
     "Smartphones",
-    "Open source"
+    "Open source",
+    {
+      "name": "Trending",
+      "priority": "normal",
+      "icon": "🔥",
+      "feeds": [
+        "https://news.google.com/rss?hl=en-US&gl=US&ceid=US:en"
+      ]
+    }
   ]
 }
