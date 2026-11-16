@@ -1,1 +1,16 @@
-{"day": "", "topics_key": "", "summaries": {}}
+{
+ "day": "2026-11-16",
+ "topics_key": "tech:high|ai:high|business:high|politics:normal|big events:normal|health:normal|music & entertainment:normal|celebrity:normal|history:normal|trending:normal|sc:normal|gaming:normal",
+ "summaries": {
+  "https://techcrunch.com/2026/11/15/apple-launches-new-app-to-study-how-people-use-ai-for-health/": "Apple launched a new app for a study to answer everyday medical questions about how people use AI for health.",
+  "https://www.theverge.com/tech/1033355/apples-new-study-looks-to-improve-the-effectiveness-of-ai-health-tools": "Apple announced a new study to understand how people interact with conversational AI health tools and how useful their responses are. The Apple Health AI Usage Study is being conducted in collaboration with OpenEvidence, a clinical AI platform.",
+  "https://arstechnica.com/space/2026/11/vulcan-rocket-fails-during-launch-dealing-major-blow-to-spacex-competitors/": "A Vulcan rocket failed during launch, dealing a major blow to SpaceX competitors. This was the first total mission failure in United Launch Alliance's 20-year history.",
+  "https://iter.ca/post/ubo-uxss/": "There is a universal XSS in uBlock Origin from a website-driven element picker.",
+  "https://news.google.com/rss/articles/CBMimgFBVV95cUxQRENhOV9sbFBJdS1ZM1ZCRU1HOXAwcVhZdEkwOXphREo4dU1IdnBmeHVnaTIzQW1KYjMwN1VRV3RfUXh5SzBoT19xVV9RdnFVWk9fTnd1WFhyVjVWMkNzN1ZBa2xNVFYzbm9Kc0VzallGVFYybnNodjAzRTRWSmQ5RjVnc3ppRzJEaWpZdmQtTkVnY3RMUWswUDVR0gGfAUFVX3lxTE1ySlpWclhiWV9zQnc2dUxfcG9xeHZQMGZWRnhsSTc2dG1qMXJnSjNPeDg4TE9WaVk2aGoxVEFWX2ttamhyRnYxMlZrS0xyRkthSjRDdzRVRG1RZTRVOXp1Y1FVbEJEQ0xHQzV3SkhXX0d3SF9VQUxKNGxFNzNCLXNmUng2TkUzRjhVLUVJYXpNTWNPbVlVeVRQOThnQ2dWVQ?oc=5": "Apple launched an AI health tool as part of a research study.",
+  "https://techcrunch.com/2026/11/15/indian-chip-startup-bharat-semi-lands-24m-seed-round-as-it-eyes-global-ai-sensor-market/": "Indian chip startup Bharat Semi secured a $24 million seed round as it eyes the global AI sensor market. The company says it has landed design wins for its AI-enabled sensor technology with firms including General Atomics.",
+  "https://www.theverge.com/entertainment/1034013/armand-hammers-snakes-ladders-review": "A surprise Armand Hammer record called Snakes & Ladders dropped this week. The reviewer notes that Billy Woods and Elucid rarely miss and that the album ranks among their best.",
+  "https://arstechnica.com/science/2026/11/how-the-worlds-fires-changed-while-humanity-hit-pause/": "COVID-19 lockdowns changed the world's fires while humanity hit pause. The lockdowns cut global fire activity by 12.3 percent.",
+  "https://news.google.com/rss/articles/CBMibEFVX3lxTE1mTC1pcW45ak1kSVRFNUxLQ3RBZnktaWNXZm5oWUVTSFNjRnFYR3hEaDQ5MFRHSTF1YXdIUVZKZ3BCQ3RSZVZjcktnb2NSbS1pM0hfMmpxaFBLRWljZFU1a0N4eFFCT1lwUk9TeA?oc=5": "Uber's Secure AI Framework governs autonomous AI agents across their lifecycle.",
+  "https://news.google.com/rss/articles/CBMickFVX3lxTE9rM3EweFo1a1ZvbllyeWNzT0dSQ2djbTRJa2NHS01jTV9hbUplR0VKYmxGeVBoYUxLbEtpZnFWOENtNUd6aWxjSjNuX3IxWjhYbDRfRDdlYjBpYXJIUUNjdV9Rd2hScUJqV3NLWWlZWFo3UQ?oc=5": "Multimodal claims intake uses agentic AI in a practical architecture."
+ }
+}
